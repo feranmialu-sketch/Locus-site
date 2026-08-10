@@ -1,0 +1,53 @@
+ INFO  Accepting connections at http://localhost:8080
+ HTTP  8/4/2026 12:51:19 PM ::1 GET /index.html
+ HTTP  8/4/2026 12:51:19 PM ::1 Returned 301 in 11 ms
+ HTTP  8/4/2026 12:51:19 PM ::1 GET /index
+ HTTP  8/4/2026 12:51:19 PM ::1 Returned 301 in 1 ms
+ HTTP  8/4/2026 12:51:19 PM ::1 GET /
+ HTTP  8/4/2026 12:51:19 PM ::1 Returned 200 in 3 ms
+ HTTP  8/4/2026 12:51:27 PM ::1 GET /index.html
+ HTTP  8/4/2026 12:51:27 PM ::1 Returned 301 in 1 ms
+ HTTP  8/4/2026 12:51:27 PM ::1 GET /index
+ HTTP  8/4/2026 12:51:27 PM ::1 Returned 301 in 1 ms
+ HTTP  8/4/2026 12:51:27 PM ::1 GET /
+ HTTP  8/4/2026 12:51:27 PM ::1 Returned 200 in 2 ms
+ HTTP  8/4/2026 12:51:27 PM ::1 GET /assets/css/base.css
+ HTTP  8/4/2026 12:51:27 PM ::1 GET /assets/css/home.css
+ HTTP  8/4/2026 12:51:27 PM ::1 GET /assets/js/common.js
+ HTTP  8/4/2026 12:51:27 PM ::1 GET /assets/js/home.js
+ HTTP  8/4/2026 12:51:27 PM ::1 Returned 200 in 6 ms
+ HTTP  8/4/2026 12:51:27 PM ::1 Returned 200 in 6 ms
+ HTTP  8/4/2026 12:51:27 PM ::1 Returned 200 in 4 ms
+ HTTP  8/4/2026 12:51:27 PM ::1 Returned 200 in 3 ms
+ HTTP  8/4/2026 12:51:27 PM ::1 GET /assets/icons/chevron-down.svg
+ HTTP  8/4/2026 12:51:27 PM ::1 Returned 200 in 2 ms
+ HTTP  8/4/2026 12:51:27 PM ::1 GET /assets/fonts/sf-pro-display/SFPRODISPLAYBOLD.OTF
+ HTTP  8/4/2026 12:51:27 PM ::1 GET /assets/fonts/sf-pro-display/sf-pro-display-semibold.otf
+ HTTP  8/4/2026 12:51:27 PM ::1 Returned 200 in 2 ms
+ HTTP  8/4/2026 12:51:27 PM ::1 Returned 200 in 4 ms
+ HTTP  8/4/2026 12:51:27 PM ::1 GET /favicon.ico
+ HTTP  8/4/2026 12:51:27 PM ::1 Returned 404 in 1 ms
+ HTTP  8/4/2026 12:53:57 PM ::1 GET /
+ HTTP  8/4/2026 12:53:57 PM ::1 Returned 304 in 1 ms
+ HTTP  8/4/2026 12:53:57 PM ::1 GET /assets/css/base.css
+ HTTP  8/4/2026 12:53:57 PM ::1 GET /assets/css/home.css
+ HTTP  8/4/2026 12:53:57 PM ::1 Returned 304 in 1 ms
+ HTTP  8/4/2026 12:53:57 PM ::1 GET /assets/js/common.js
+ HTTP  8/4/2026 12:53:57 PM ::1 GET /assets/js/home.js
+ HTTP  8/4/2026 12:53:57 PM ::1 Returned 304 in 1 ms
+ HTTP  8/4/2026 12:53:57 PM ::1 Returned 304 in 1 ms
+ HTTP  8/4/2026 12:53:57 PM ::1 Returned 200 in 3 ms
+ HTTP  8/4/2026 12:53:57 PM ::1 GET /assets/icons/chevron-down.svg
+ HTTP  8/4/2026 12:53:57 PM ::1 Returned 304 in 1 ms
+ HTTP  8/4/2026 1:01:33 PM ::1 GET /
+ HTTP  8/4/2026 1:01:33 PM ::1 Returned 304 in 1 ms
+ HTTP  8/4/2026 1:01:33 PM ::1 GET /assets/css/base.css
+ HTTP  8/4/2026 1:01:33 PM ::1 GET /assets/css/home.css
+ HTTP  8/4/2026 1:01:33 PM ::1 Returned 304 in 1 ms
+ HTTP  8/4/2026 1:01:33 PM ::1 GET /assets/js/common.js
+ HTTP  8/4/2026 1:01:33 PM ::1 GET /assets/js/home.js
+ HTTP  8/4/2026 1:01:33 PM ::1 Returned 304 in 1 ms
+ HTTP  8/4/2026 1:01:33 PM ::1 Returned 304 in 1 ms
+ HTTP  8/4/2026 1:01:33 PM ::1 Returned 200 in 4 ms
+ HTTP  8/4/2026 1:01:33 PM ::1 GET /assets/icons/chevron-down.svg
+ HTTP  8/4/2026 1:01:33 PM ::1 Returned 304 in 1 ms
