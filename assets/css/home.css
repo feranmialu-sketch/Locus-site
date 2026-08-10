@@ -241,8 +241,8 @@
 .field-section{padding:var(--space-7) 0;overflow:hidden;}
 .field-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;}
 .field-canvas-wrap{
-  position:relative;height:440px;border-radius:var(--radius-lg);border:1px solid var(--border);
-  background:var(--bg-alt);overflow:hidden;
+  position:relative;height:440px;border-radius:var(--radius-lg);border:1px solid var(--dark-border);
+  background:radial-gradient(120% 100% at 50% 0%, #10141F 0%, var(--dark-bg) 62%);overflow:hidden;
 }
 #fieldCanvas{width:100%;height:100%;display:block;}
 @media (max-width:900px){.field-grid{grid-template-columns:1fr;} .field-canvas-wrap{height:320px;order:-1;}}

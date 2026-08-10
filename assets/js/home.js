@@ -159,35 +159,37 @@ document.querySelectorAll('.faq-q').forEach(btn=>{
     }
   }
   resize();
-  window.addEventListener('resize', resize);
+  /* resizing the canvas wipes it, so the reduced-motion grid has to be repainted */
+  window.addEventListener('resize', ()=>{ resize(); if(window.reduceMotion) drawStatic(); });
+  let hovering = false;
   wrap.addEventListener('mousemove', e=>{
     const r = wrap.getBoundingClientRect();
+    hovering = true;
     mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top;
   });
-  wrap.addEventListener('mouseleave', ()=>{ mouse.x=-9999; mouse.y=-9999; });
+  wrap.addEventListener('mouseleave', ()=>{ hovering = false; mouse.x=-9999; mouse.y=-9999; });
 
-  /* Touch devices never fire mousemove, so the field would sit as a static
-     dot grid. There, sweep a virtual cursor through the same `mouse` the
-     hover path drives — no change to the draw logic or to desktop, which
-     keeps hover because it matches (hover:hover) and (pointer:fine). The
-     sweep only runs while the frame is on screen. */
-  const canHover = window.matchMedia('(hover:hover) and (pointer:fine)');
-  let autoPlay = false, autoT = 0;
-  if(!canHover.matches){
-    const fieldIO = new IntersectionObserver(entries=>{
-      entries.forEach(entry=>{
-        autoPlay = entry.isIntersecting;
-        if(!autoPlay){ mouse.x = -9999; mouse.y = -9999; }
-      });
-    }, { threshold:0.2 });
-    fieldIO.observe(wrap);
-  }
+  /* The sweep that used to be touch-only now drives every breakpoint: a
+     virtual cursor moves through the same `mouse` the hover path writes to,
+     so the draw logic is untouched. Hover still works — while the pointer is
+     inside the frame it takes the wheel, and the sweep resumes on leave. It
+     only runs while the frame is on screen. */
+  let inView = false, autoT = 0;
+  const fieldIO = new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      inView = entry.isIntersecting;
+      if(!inView){ mouse.x = -9999; mouse.y = -9999; }
+    });
+  }, { threshold:0.2 });
+  fieldIO.observe(wrap);
 
   const accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
   const ink = getComputedStyle(document.documentElement).getPropertyValue('--ink').trim();
+  /* the frame reads dark now, so the resting dots are light on it */
+  const dot = 'rgba(243,243,241,0.28)';
 
   function draw(){
-    if(autoPlay){
+    if(inView && !hovering){
       /* lissajous path — the two frequencies don't divide evenly, so the
          sphere keeps covering fresh ground instead of retracing one loop */
       autoT += 0.012;
@@ -210,15 +212,18 @@ document.querySelectorAll('.faq-q').forEach(btn=>{
       const near = dist < radius;
       ctx.beginPath();
       ctx.arc(p.x, p.y, near ? 2.4 : 1.6, 0, Math.PI*2);
-      ctx.fillStyle = near ? accent : 'rgba(11,12,13,0.22)';
+      ctx.fillStyle = near ? accent : dot;
       ctx.fill();
     });
     requestAnimationFrame(draw);
   }
-  if(!window.reduceMotion) requestAnimationFrame(draw);
-  else {
-    points.forEach(p=>{ ctx.beginPath(); ctx.arc(p.x,p.y,1.6,0,Math.PI*2); ctx.fillStyle='rgba(11,12,13,0.22)'; ctx.fill(); });
+  /* reduced motion: the grid is drawn once, at rest, and never animates */
+  function drawStatic(){
+    ctx.clearRect(0,0,w,h);
+    points.forEach(p=>{ ctx.beginPath(); ctx.arc(p.x,p.y,1.6,0,Math.PI*2); ctx.fillStyle=dot; ctx.fill(); });
   }
+  if(!window.reduceMotion) requestAnimationFrame(draw);
+  else drawStatic();
 })();
 
 /* ============================================================
