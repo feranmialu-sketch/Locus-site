@@ -41,6 +41,10 @@
    hardcoded <br> so the text reflows instead of breaking twice. Scoped to
    .hero-headline, so every other h1 on the site keeps the shared scale. */
 @media (max-width:860px){
+  /* the 100px term clears the sticky nav; the rest is the gap below it, which
+     on a phone left the pill stranded. 120px -> 60px, bottom padding kept. */
+  .hero{padding-top:calc(100px + 60px);}
+
   .hero-headline{font-size:clamp(30px, 12px + 7vw, 66px);}
   .hero-headline br{display:none;}
 
@@ -305,6 +309,18 @@
 .field select option{background:#fff;color:var(--ink);}
 textarea{resize:vertical;min-height:120px;}
 @media (max-width:900px){.contact-grid{grid-template-columns:1fr;} .form-row{grid-template-columns:1fr;}}
+/* mobile spacing only — home.css doesn't load on the case-study pages, so the
+   shared .site-footer rule stays as-is everywhere else.
+   pill -> first field: the 64px column gap reads as a stacked gap once the
+   grid is one column, and the pill's own 28px trailing margin sits on top of
+   it. 92px -> 28px, taking the trailing margin off the dark pill only.
+   card -> footer: 120px + 120px of section padding -> 56px + 80px. */
+@media (max-width:860px){
+  .contact-grid{gap:28px;}
+  .contact-panel .availability-pill{margin-bottom:0;}
+  .contact-section{padding-bottom:var(--space-5);}
+  .site-footer{padding-top:var(--space-6);}
+}
 
 /* misc */
 .section-cta-center{display:flex;justify-content:center;margin-top:var(--space-5);}
