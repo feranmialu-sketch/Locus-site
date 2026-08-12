@@ -287,6 +287,19 @@
 }
 .contact-grid{display:grid;grid-template-columns:0.9fr 1.1fr;gap:64px;}
 .contact-panel .h2{color:var(--dark-text);}
+/* Contact heading line breaks — intentional, not a by-product of how the
+   column happens to resolve. Each phrase is its own block box (so the break
+   is fixed) and unbreakable (so a narrow column can't wrap one of them into
+   a fourth line). The grid is untouched.
+
+   1200px, not the 900px grid breakpoint: the widest phrase, "something
+   worth", measures 434.8px at the 64px cap, and the column only clears that
+   above ~1092px. Holding the break below that would overflow the column
+   instead of wrapping. Under 1200px the spans fall back to inline and the
+   heading wraps naturally, as it did before. */
+@media (min-width:1200px){
+  .contact-heading span{display:block;white-space:nowrap;}
+}
 .contact-panel p{color:var(--dark-text-soft);}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px;}
 .field label{display:block;font-size:14px;font-weight:500;color:var(--dark-text-soft);margin-bottom:10px;}
