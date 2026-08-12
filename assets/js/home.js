@@ -227,12 +227,106 @@ document.querySelectorAll('.faq-q').forEach(btn=>{
 })();
 
 /* ============================================================
-   CONTACT FORM — lightweight confirmation (no backend wired)
+   CONTACT FORM — posts to /api/contact, which relays through
+   Resend server-side. The form is only reset once the API
+   confirms the send, so a failure leaves everything typed.
    ============================================================ */
-document.getElementById('contactForm').addEventListener('submit', function(){
-  const btn = this.querySelector('button[type="submit"]');
-  const original = btn.innerHTML;
-  btn.innerHTML = 'Enquiry sent';
-  btn.style.opacity = '0.8';
-  setTimeout(()=>{ btn.innerHTML = original; btn.style.opacity = '1'; this.reset(); }, 2200);
-});
+(function contactForm(){
+  const form   = document.getElementById('contactForm');
+  const btn    = form.querySelector('button[type="submit"]');
+  const errorEl = document.getElementById('contactError');
+  const modal  = document.getElementById('enquiryModal');
+  const idle   = btn.innerHTML;
+  let sending  = false;
+  let lastFocused = null;
+
+  const FALLBACK_ERROR =
+    'Something went wrong sending your enquiry. Please try again, or email hello@locusstudio.dev directly.';
+
+  function showError(message){
+    errorEl.textContent = message;
+    errorEl.hidden = false;
+  }
+  function clearError(){
+    errorEl.hidden = true;
+    errorEl.textContent = '';
+  }
+
+  function setSending(on){
+    sending = on;
+    btn.disabled = on;
+    btn.setAttribute('aria-busy', String(on));
+    if(on){
+      btn.dataset.loading = 'true';
+      btn.innerHTML = 'Sending<span class="btn-spinner" aria-hidden="true"></span>';
+    } else {
+      delete btn.dataset.loading;
+      btn.innerHTML = idle;
+    }
+  }
+
+  /* ---- success modal ---- */
+  function openModal(){
+    lastFocused = document.activeElement;
+    modal.hidden = false;
+    /* next frame so the transition has a state to animate from */
+    requestAnimationFrame(()=>{ modal.classList.add('is-open'); });
+    document.body.style.overflow = 'hidden';
+    modal.querySelector('.enquiry-modal-dismiss').focus();
+  }
+  function closeModal(){
+    modal.classList.remove('is-open');
+    document.body.style.overflow = '';
+    const finish = ()=>{ modal.hidden = true; };
+    if(window.reduceMotion) finish();
+    else setTimeout(finish, 300); /* matches --dur-sm */
+    if(lastFocused) lastFocused.focus();
+  }
+  modal.addEventListener('click', (e)=>{
+    if(e.target.closest('[data-close-modal]')) closeModal();
+  });
+  document.addEventListener('keydown', (e)=>{
+    if(e.key === 'Escape' && !modal.hidden) closeModal();
+  });
+
+  form.addEventListener('submit', async function(e){
+    e.preventDefault();
+    if(sending) return;
+
+    clearError();
+    setSending(true);
+
+    const payload = {
+      name:    document.getElementById('cf-name').value,
+      email:   document.getElementById('cf-email').value,
+      company: document.getElementById('cf-company').value,
+      website: document.getElementById('cf-website').value,
+      need:    document.getElementById('cf-need').value,
+      budget:  document.getElementById('cf-budget').value,
+      project: document.getElementById('cf-project').value
+    };
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await response.json().catch(()=>({}));
+
+      if(!response.ok || !data.ok){
+        showError(data.error || FALLBACK_ERROR);
+        setSending(false);
+        return;
+      }
+
+      /* confirmed sent — only now is it safe to clear what they typed */
+      form.reset();
+      setSending(false);
+      openModal();
+    } catch {
+      showError(FALLBACK_ERROR);
+      setSending(false);
+    }
+  });
+})();

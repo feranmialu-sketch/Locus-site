@@ -322,5 +322,67 @@ textarea{resize:vertical;min-height:120px;}
   .site-footer{padding-top:var(--space-6);}
 }
 
+/* ============================================================
+   CONTACT FORM STATES — submit button while sending, and the
+   inline error line under it. Both sit inside the dark contact
+   panel, so they read against --dark-bg.
+   ============================================================ */
+.btn[data-loading="true"]{opacity:.72;cursor:progress;}
+.btn[data-loading="true"]:hover{transform:none;box-shadow:none;background:var(--accent);}
+.btn-spinner{
+  width:14px;height:14px;flex-shrink:0;border-radius:50%;
+  border:1.8px solid rgba(255,255,255,0.35);border-top-color:#fff;
+  animation:btn-spin .7s linear infinite;
+}
+@keyframes btn-spin{to{transform:rotate(360deg);}}
+@media (prefers-reduced-motion: reduce){.btn-spinner{animation:none;}}
+
+.form-error{
+  margin-top:14px;font-size:14px;line-height:1.5;color:#FF8A8A;
+}
+
+/* ============================================================
+   ENQUIRY SENT MODAL
+   ============================================================ */
+.enquiry-modal{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:var(--gutter);}
+.enquiry-modal[hidden]{display:none;}
+.enquiry-modal-backdrop{
+  position:absolute;inset:0;background:rgba(11,12,13,0.58);
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  opacity:0;transition:opacity var(--dur-sm) var(--ease);
+}
+.enquiry-modal-card{
+  position:relative;width:100%;max-width:460px;
+  background:var(--dark-bg);color:var(--dark-text);
+  background-image:radial-gradient(700px 320px at 85% 0%, rgba(41,126,255,0.24), transparent 62%);
+  border:1px solid var(--dark-border);border-radius:var(--radius-lg);
+  padding:var(--space-5) var(--space-4) var(--space-4);
+  box-shadow:0 40px 90px -30px rgba(0,0,0,0.6);
+  opacity:0;transform:translateY(14px) scale(.98);
+  transition:opacity var(--dur-sm) var(--ease), transform var(--dur-sm) var(--ease);
+}
+.enquiry-modal.is-open .enquiry-modal-backdrop{opacity:1;}
+.enquiry-modal.is-open .enquiry-modal-card{opacity:1;transform:none;}
+.enquiry-modal-card .h3{color:var(--dark-text);}
+.enquiry-modal-card p{margin-top:14px;color:var(--dark-text-soft);}
+.enquiry-modal-mark{
+  display:flex;align-items:center;justify-content:center;
+  width:46px;height:46px;margin-bottom:var(--space-3);
+  border-radius:50%;color:var(--green);
+  background:rgba(53,196,106,0.12);border:1px solid rgba(53,196,106,0.32);
+}
+.enquiry-modal-close{
+  position:absolute;top:18px;right:18px;
+  display:flex;align-items:center;justify-content:center;
+  width:34px;height:34px;border-radius:50%;
+  color:var(--dark-text-soft);border:1px solid var(--dark-border);
+  transition:color var(--dur-sm) var(--ease), border-color var(--dur-sm) var(--ease), background var(--dur-sm) var(--ease);
+}
+.enquiry-modal-close:hover{color:var(--dark-text);border-color:rgba(255,255,255,0.28);background:rgba(255,255,255,0.06);}
+.enquiry-modal-dismiss{margin-top:var(--space-4);width:100%;justify-content:center;}
+@media (prefers-reduced-motion: reduce){
+  .enquiry-modal-backdrop,.enquiry-modal-card{transition:none;}
+}
+
 /* misc */
 .section-cta-center{display:flex;justify-content:center;margin-top:var(--space-5);}

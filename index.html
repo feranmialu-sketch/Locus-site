@@ -496,6 +496,7 @@
           <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:8px;">Send enquiry
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 11L11 3M11 3H4M11 3V10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
+          <p class="form-error" id="contactError" role="alert" hidden></p>
         </form>
       </div>
     </div>
@@ -538,6 +539,22 @@
     </div>
   </div>
 </footer>
+
+<!-- ================= ENQUIRY SENT MODAL ================= -->
+<div class="enquiry-modal" id="enquiryModal" hidden>
+  <div class="enquiry-modal-backdrop" data-close-modal></div>
+  <div class="enquiry-modal-card" role="dialog" aria-modal="true" aria-labelledby="enquiryModalTitle" aria-describedby="enquiryModalBody">
+    <button type="button" class="enquiry-modal-close" data-close-modal aria-label="Close">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 2L12 12M12 2L2 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    </button>
+    <div class="enquiry-modal-mark">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M4.5 11.5L9 16L17.5 6.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <h3 class="h3" id="enquiryModalTitle">Enquiry received.</h3>
+    <p id="enquiryModalBody">Thanks — your enquiry has landed with us. We read every one personally and will reply within one working day.</p>
+    <button type="button" class="btn btn-primary enquiry-modal-dismiss" data-close-modal>Close</button>
+  </div>
+</div>
 
 <script src="assets/js/common.js"></script>
 <script src="assets/js/home.js"></script>
