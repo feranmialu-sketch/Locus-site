@@ -3,6 +3,28 @@
    Exposes window.reduceMotion for page-specific scripts.
    ============================================================ */
 
+/* ============================================================
+   VERCEL WEB ANALYTICS — this file is loaded by every page, so
+   initialising here covers the homepage and all case studies in
+   one place.
+
+   This is what @vercel/analytics' inject() does: append Vercel's
+   first-party insights script. The npm package expects a bundler
+   to resolve its import, and this site is served as plain HTML
+   with no build step, so the script is appended directly instead.
+
+   The endpoint is same-origin and only exists on Vercel, so it is
+   a harmless 404 when the site is opened locally. Loaded deferred
+   and appended at runtime, it cannot block rendering or affect
+   anything else on the page.
+   ============================================================ */
+(function vercelAnalytics(){
+  const script = document.createElement('script');
+  script.src = '/_vercel/insights/script.js';
+  script.defer = true;
+  document.head.appendChild(script);
+})();
+
 window.reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* Reveal threshold differs slightly between the homepage (0.15)
