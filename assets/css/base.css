@@ -326,3 +326,46 @@ p{font-size:clamp(16px, 15.2px + 0.2vw, 18px);line-height:1.6;color:var(--ink-so
   .footer-top{grid-template-columns:1fr;gap:36px;}
   .footer-bottom{flex-direction:column;gap:10px;align-items:flex-start;}
 }
+
+/* ============================================================
+   CONTENT PROTECTION
+   Paired with the contentProtection block in common.js. Kept in
+   its own section, touching nothing above, so the whole feature
+   can be lifted out by deleting this block and that one.
+
+   Selection is off page-wide and opted back IN for form controls
+   — the contact form has to stay usable, so anything a visitor
+   types stays selectable, copyable and pasteable.
+   ============================================================ */
+body{
+  -webkit-user-select:none;
+  user-select:none;
+  -webkit-touch-callout:none;
+}
+input, textarea, select, option, [contenteditable="true"]{
+  -webkit-user-select:text;
+  user-select:text;
+}
+img, svg, canvas{-webkit-user-drag:none;}
+
+/* toast — dark pill above the bottom edge. pointer-events:none is load
+   bearing: it can never intercept a click, scroll or tap meant for the
+   page underneath. z-index clears the nav (100) and enquiry modal (200). */
+.protect-toast{
+  position:fixed;left:50%;bottom:28px;z-index:300;
+  max-width:min(92vw, 420px);
+  padding:11px 18px;
+  background:var(--dark-bg);color:var(--dark-text);
+  border:1px solid var(--dark-border);
+  border-radius:var(--radius-pill);
+  font-family:var(--font-body);
+  font-size:14px;font-weight:500;line-height:1.45;text-align:center;
+  box-shadow:0 14px 38px rgba(11,12,13,0.32);
+  opacity:0;pointer-events:none;
+  transform:translateX(-50%) translateY(8px);
+  transition:opacity var(--dur-sm) var(--ease), transform var(--dur-sm) var(--ease);
+}
+.protect-toast.is-visible{opacity:1;transform:translateX(-50%) translateY(0);}
+@media (max-width:480px){
+  .protect-toast{bottom:20px;font-size:13px;padding:10px 16px;}
+}
