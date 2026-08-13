@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    { "source": "/fathom", "destination": "/work-fathom.html" },
+    { "source": "/forma", "destination": "/work-forma.html" },
+    { "source": "/orba", "destination": "/work-orba.html" },
+    { "source": "/relay", "destination": "/work-relay.html" }
+  ]
+}

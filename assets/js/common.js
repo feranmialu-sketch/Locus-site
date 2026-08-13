@@ -58,6 +58,21 @@ if(navToggle && navMobileMenu){
   });
 }
 
+/* ============================================================
+   CLEAN URLS — the browser has already used the #hash to jump/
+   smooth-scroll to the target section by the time this runs; this
+   just tidies the address bar afterward via the History API, so
+   the click/scroll behavior itself is untouched.
+   ============================================================ */
+if(location.hash){
+  window.addEventListener('load', ()=>{
+    history.replaceState(null, '', location.pathname + location.search);
+  });
+}
+window.addEventListener('hashchange', ()=>{
+  history.replaceState(null, '', location.pathname + location.search);
+});
+
 /* nav — subtle scroll shadow */
 const navShell = document.querySelector('.nav-shell');
 window.addEventListener('scroll', ()=>{
