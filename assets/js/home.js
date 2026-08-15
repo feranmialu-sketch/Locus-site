@@ -82,25 +82,35 @@ const track = document.getElementById('galleryTrack');
     render(Math.min(lastStage, Math.floor(progress * items.length)), progress*100);
   }
 
-  /* ---- mobile: discrete, locked, one-step-per-gesture ----
-     Tap, swipe and wheel all funnel through this one function. It moves
-     at most one step per call, always relative to the current step (never
-     to wherever a fast/long gesture's raw position would land), and while
-     `locked` is true any further calls are dropped rather than queued. The
-     lock lasts as long as the existing .process-desc reveal transition
-     (.4s, home.css) so it releases exactly when the step change finishes
-     animating — that's what stops a fling or a burst of touch/wheel events
-     from one gesture racking up more than one transition. */
+  /* ---- mobile: locked transitions shared by both interaction types ----
+     `step` (scroll/swipe) and `goTo` (tap) are the only two things that
+     ever change the active step on mobile. Both share `locked`+`render`: a
+     transition locks out further changes until it finishes, so rapid taps
+     or a burst of touch/wheel events from one gesture can't produce more
+     than one change or leave inconsistent state. The lock lasts as long as
+     the existing .process-desc reveal transition (.4s, home.css) so it
+     releases exactly when the step change finishes animating. */
   const MOBILE_LOCK_MS = 400;
   let locked = false;
+  function lockFor(ms){
+    locked = true;
+    if(window.reduceMotion) locked = false;
+    else setTimeout(()=>{ locked = false; }, ms);
+  }
+  /* scroll/swipe — sequential, relative to the current step only */
   function step(delta){
     if(locked) return;
     const next = stage + delta;
     if(next < 0 || next > lastStage) return;
-    locked = true;
     render(next);
-    if(window.reduceMotion) locked = false;
-    else setTimeout(()=>{ locked = false; }, MOBILE_LOCK_MS);
+    lockFor(MOBILE_LOCK_MS);
+  }
+  /* tap — direct jump to the requested step */
+  function goTo(next){
+    next = Math.min(lastStage, Math.max(0, next));
+    if(locked || next === stage) return;
+    render(next);
+    lockFor(MOBILE_LOCK_MS);
   }
 
   window.addEventListener('scroll', ()=>{ if(isDesktop.matches) updateDesktop(); }, { passive:true });
@@ -115,44 +125,82 @@ const track = document.getElementById('galleryTrack');
   applyScrollHeight();
   if(isDesktop.matches) updateDesktop();
 
-  /* tap — direction relative to the current step only, so tapping a distant
-     step still ever advances a single step at a time (desktop keeps its
-     original scroll-to-the-tapped-item behavior) */
+  /* A. TAP — jumps straight to the tapped step (desktop keeps its original
+     scroll-to-the-tapped-item behavior) */
   items.forEach(item=>{
     item.addEventListener('click', ()=>{
+      const idx = parseInt(item.dataset.stage,10);
       if(isDesktop.matches){
-        const idx = parseInt(item.dataset.stage,10);
         const rect = section.getBoundingClientRect();
         const total = rect.height - window.innerHeight;
         const targetScroll = window.scrollY + rect.top + (total * (idx/items.length)) + 10;
         window.scrollTo({ top: targetScroll, behavior: window.reduceMotion ? 'auto' : 'smooth' });
       } else {
-        const idx = parseInt(item.dataset.stage,10);
-        if(idx > stage) step(1);
-        else if(idx < stage) step(-1);
+        goTo(idx);
       }
     });
   });
 
-  /* swipe + wheel — mobile only, scoped to the process block so they never
-     hijack scrolling/wheel elsewhere on the page. Only direction is read;
-     distance, speed and momentum never change how many steps are taken. */
-  let touchStartY = null;
-  inner.addEventListener('touchstart', e=>{
+  /* C./D. SECTION SCROLL LOCK + EDGE RELEASE — mobile only. While the
+     section substantially fills the viewport, wheel/touch input is
+     intercepted (preventDefault) so the page can't scroll past it; the
+     gesture's direction instead drives one `step()` call. At step 1
+     (scrolling further back) or step 6 (scrolling further forward) the
+     gesture is left alone so the native scroll carries the page to the
+     previous/next section — re-entering afterwards re-engages the lock,
+     so direction is always reversible. Geometry is recomputed from the
+     live boundingClientRect on every event (not a cached/one-way scroll
+     position), so it keeps working correctly no matter how often the
+     user changes direction. */
+  function sectionFillsViewport(){
+    const rect = section.getBoundingClientRect();
+    return rect.top <= 24 && rect.bottom >= window.innerHeight * 0.4;
+  }
+
+  /* B. SCROLL/SWIPE — touch */
+  let touchStartY = 0;
+  let touchMode = null;   // null = undecided, 'trap' | 'release' for this touch
+  let touchFired = false;
+  window.addEventListener('touchstart', e=>{
     if(isDesktop.matches) return;
     touchStartY = e.touches[0].clientY;
+    touchMode = null;
+    touchFired = false;
   }, { passive:true });
-  inner.addEventListener('touchend', e=>{
-    if(isDesktop.matches || touchStartY === null) return;
-    const dy = touchStartY - e.changedTouches[0].clientY;
-    touchStartY = null;
-    if(Math.abs(dy) < 24) return;
-    step(dy > 0 ? 1 : -1);
+  window.addEventListener('touchmove', e=>{
+    if(isDesktop.matches || touchMode === 'release') return;
+    const y = e.touches[0].clientY;
+    const dy = touchStartY - y; /* >0 = finger moved up = forward */
+    if(touchMode === null){
+      if(!sectionFillsViewport()){ touchMode = 'release'; return; }
+      if(Math.abs(dy) < 10) return; /* not enough movement yet to decide */
+      const forward = dy > 0;
+      if((forward && stage === lastStage) || (!forward && stage === 0)){
+        touchMode = 'release';
+        return;
+      }
+      touchMode = 'trap';
+    }
+    e.preventDefault();
+    if(!touchFired && Math.abs(dy) >= 24){
+      touchFired = true;
+      step(dy > 0 ? 1 : -1);
+    }
+  }, { passive:false });
+  window.addEventListener('touchend', ()=>{
+    touchMode = null;
+    touchFired = false;
   }, { passive:true });
-  inner.addEventListener('wheel', e=>{
+
+  /* B. SCROLL/SWIPE — wheel (trackpad/mouse) */
+  window.addEventListener('wheel', e=>{
     if(isDesktop.matches || Math.abs(e.deltaY) < 4) return;
-    step(e.deltaY > 0 ? 1 : -1);
-  }, { passive:true });
+    if(!sectionFillsViewport()) return;
+    const forward = e.deltaY > 0;
+    if((forward && stage === lastStage) || (!forward && stage === 0)) return;
+    e.preventDefault();
+    step(forward ? 1 : -1);
+  }, { passive:false });
 })();
 
 /* ============================================================
