@@ -35,16 +35,17 @@ const track = document.getElementById('galleryTrack');
 })();
 
 /* ============================================================
-   PROCESS — scroll-linked progression
+   PROCESS — scroll-linked progression (desktop), discrete
+   locked stepper (mobile)
    ============================================================ */
 (function process(){
   const section = document.getElementById('process');
   const inner = document.querySelector('.process-inner');
-  const list = document.getElementById('processList');
   const items = document.querySelectorAll('.process-item');
   const fill = document.getElementById('processFill');
   const stageNum = document.getElementById('processStageNum');
   const nums = ['01','02','03','04','05','06'];
+  const lastStage = items.length - 1;
 
   /* Matches the 900px breakpoint in home.css where .process-list and
      .process-visual stop being sticky. Above it the section is given extra
@@ -62,53 +63,96 @@ const track = document.getElementById('galleryTrack');
     }
   }
 
-  function update(){
-    let progress;
-    if(isDesktop.matches){
-      /* pinned: progress is the section's own scroll span */
-      const rect = section.getBoundingClientRect();
-      const total = rect.height - window.innerHeight;
-      const scrolled = Math.min(Math.max(-rect.top, 0), total);
-      progress = total > 0 ? scrolled / total : 0;
-    } else {
-      /* not pinned: drive the stages off the list's travel past the
-         viewport centre, so the active step is the one you're looking at
-         instead of one keyed to a scroll span the list has already left. */
-      const rect = list.getBoundingClientRect();
-      progress = rect.height > 0
-        ? (window.innerHeight * 0.5 - rect.top) / rect.height
-        : 0;
-      progress = Math.min(Math.max(progress, 0), 1);
-    }
-    fill.style.height = (progress*100) + '%';
-
-    const stage = Math.min(items.length - 1, Math.floor(progress * items.length));
-    items.forEach((item,i)=>{
-      item.classList.toggle('active', i === stage);
-    });
+  /* single place that ever writes the active step, shared by every
+     interaction type (desktop scroll-scrub, mobile tap/swipe/wheel) */
+  let stage = 0;
+  function render(next, fillPct){
+    stage = Math.min(lastStage, Math.max(0, next));
+    fill.style.height = (fillPct != null ? fillPct : ((stage+1)/items.length*100)) + '%';
+    items.forEach((item,i)=>{ item.classList.toggle('active', i === stage); });
     stageNum.textContent = nums[stage];
   }
-  window.addEventListener('scroll', update, { passive:true });
-  window.addEventListener('resize', ()=>{ applyScrollHeight(); update(); });
-  isDesktop.addEventListener('change', ()=>{ applyScrollHeight(); update(); });
-  applyScrollHeight();
-  update();
 
+  /* ---- desktop: pinned scroll-scrub, unchanged ---- */
+  function updateDesktop(){
+    const rect = section.getBoundingClientRect();
+    const total = rect.height - window.innerHeight;
+    const scrolled = Math.min(Math.max(-rect.top, 0), total);
+    const progress = total > 0 ? scrolled / total : 0;
+    render(Math.min(lastStage, Math.floor(progress * items.length)), progress*100);
+  }
+
+  /* ---- mobile: discrete, locked, one-step-per-gesture ----
+     Tap, swipe and wheel all funnel through this one function. It moves
+     at most one step per call, always relative to the current step (never
+     to wherever a fast/long gesture's raw position would land), and while
+     `locked` is true any further calls are dropped rather than queued. The
+     lock lasts as long as the existing .process-desc reveal transition
+     (.4s, home.css) so it releases exactly when the step change finishes
+     animating — that's what stops a fling or a burst of touch/wheel events
+     from one gesture racking up more than one transition. */
+  const MOBILE_LOCK_MS = 400;
+  let locked = false;
+  function step(delta){
+    if(locked) return;
+    const next = stage + delta;
+    if(next < 0 || next > lastStage) return;
+    locked = true;
+    render(next);
+    if(window.reduceMotion) locked = false;
+    else setTimeout(()=>{ locked = false; }, MOBILE_LOCK_MS);
+  }
+
+  window.addEventListener('scroll', ()=>{ if(isDesktop.matches) updateDesktop(); }, { passive:true });
+  window.addEventListener('resize', ()=>{
+    applyScrollHeight();
+    if(isDesktop.matches) updateDesktop(); else render(stage);
+  });
+  isDesktop.addEventListener('change', ()=>{
+    applyScrollHeight();
+    if(isDesktop.matches) updateDesktop(); else render(stage);
+  });
+  applyScrollHeight();
+  if(isDesktop.matches) updateDesktop();
+
+  /* tap — direction relative to the current step only, so tapping a distant
+     step still ever advances a single step at a time (desktop keeps its
+     original scroll-to-the-tapped-item behavior) */
   items.forEach(item=>{
     item.addEventListener('click', ()=>{
-      const idx = parseInt(item.dataset.stage,10);
-      let targetScroll;
       if(isDesktop.matches){
+        const idx = parseInt(item.dataset.stage,10);
         const rect = section.getBoundingClientRect();
         const total = rect.height - window.innerHeight;
-        targetScroll = window.scrollY + rect.top + (total * (idx/items.length)) + 10;
+        const targetScroll = window.scrollY + rect.top + (total * (idx/items.length)) + 10;
+        window.scrollTo({ top: targetScroll, behavior: window.reduceMotion ? 'auto' : 'smooth' });
       } else {
-        /* no scroll span to map onto — bring the item itself into view */
-        targetScroll = window.scrollY + item.getBoundingClientRect().top - (window.innerHeight * 0.4);
+        const idx = parseInt(item.dataset.stage,10);
+        if(idx > stage) step(1);
+        else if(idx < stage) step(-1);
       }
-      window.scrollTo({ top: targetScroll, behavior: window.reduceMotion ? 'auto' : 'smooth' });
     });
   });
+
+  /* swipe + wheel — mobile only, scoped to the process block so they never
+     hijack scrolling/wheel elsewhere on the page. Only direction is read;
+     distance, speed and momentum never change how many steps are taken. */
+  let touchStartY = null;
+  inner.addEventListener('touchstart', e=>{
+    if(isDesktop.matches) return;
+    touchStartY = e.touches[0].clientY;
+  }, { passive:true });
+  inner.addEventListener('touchend', e=>{
+    if(isDesktop.matches || touchStartY === null) return;
+    const dy = touchStartY - e.changedTouches[0].clientY;
+    touchStartY = null;
+    if(Math.abs(dy) < 24) return;
+    step(dy > 0 ? 1 : -1);
+  }, { passive:true });
+  inner.addEventListener('wheel', e=>{
+    if(isDesktop.matches || Math.abs(e.deltaY) < 4) return;
+    step(e.deltaY > 0 ? 1 : -1);
+  }, { passive:true });
 })();
 
 /* ============================================================
