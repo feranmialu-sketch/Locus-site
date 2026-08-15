@@ -91,7 +91,7 @@
 .work-feature{margin-bottom:var(--space-7);}
 .work-feature:last-of-type{margin-bottom:var(--space-6);}
 .work-feature-link{
-  display:block;border-radius:var(--radius-lg);overflow:hidden;
+  display:block;border-radius:var(--radius-lg);
 }
 /* every work card shares one frame ratio, declared here rather than per
    card, so all four thumbs resolve to the same height at any viewport and
