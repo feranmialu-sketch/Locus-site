@@ -127,6 +127,83 @@
 .work-cta-row{display:flex;justify-content:center;margin-top:var(--space-6);}
 
 /* ============================================================
+   THE STANDARD WE DESIGN TO — editorial reference list.
+
+   Dark, because on this page dark is already the language of the
+   statement moments (process, testimonial, contact panel) rather
+   than a new visual register. It also punctuates the light
+   work -> services run without two adjacent tones merging.
+
+   The row is deliberately the .service-row pattern — CSS grid,
+   hairline rule, same 36px rhythm — so it reads as native to the
+   page. Type and rules only: no logos, cards or gradients.
+   ============================================================ */
+.standards-section{padding:var(--space-7) 0;background:var(--dark-bg);color:var(--dark-text);}
+.standards-section .eyebrow{color:var(--dark-text-soft);}
+.standards-section .h2{color:var(--dark-text);}
+.standards-section p{color:var(--dark-text-soft);}
+.standards-head{max-width:760px;}
+.standards-lead{margin-top:20px;max-width:640px;}
+
+/* 4 x 2. margin-bottom on .section-head (56px) collapses against this 80px,
+   so the head-to-grid gap resolves to 80px, not 136px. Row gap matches
+   .why-grid's 32px so the vertical rhythm is the page's, not a new one. */
+.standards-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:32px 28px;
+  margin-top:var(--space-6);
+}
+/* each cell carries its own hairline — the .why-card pattern, same 32px
+   top padding. It survives any column count, so the rules stay deliberate
+   as the grid rewraps, which vertical dividers would not. */
+.standard-item{padding:var(--space-4) 4px 0;border-top:1px solid var(--dark-border);}
+
+/* mark and name are one line — the mark anchors, the name identifies.
+   19px display is .why-title's exact cut, so these read as siblings of the
+   other section subheads rather than as a new type size. */
+.standard-name{
+  display:flex;align-items:center;gap:11px;
+  font-family:var(--font-display);font-size:19px;font-weight:700;
+  line-height:1.2;letter-spacing:-0.015em;color:var(--dark-text);
+}
+.standard-logo{
+  display:flex;align-items:center;flex-shrink:0;height:var(--logo-h,20px);
+  color:var(--dark-text-soft);
+  transition:color var(--dur-sm) var(--ease);
+}
+/* height fixed, width auto — these marks have different aspect ratios and
+   forcing them to a common box would distort them (same rule the footer
+   social marks use). currentColor keeps every mark monochrome, so no
+   brand palette breaks the section's two-tone scheme. */
+.standard-logo svg{display:block;height:100%;width:auto;fill:currentColor;}
+/* optical balance, not uniform measurement: the Vercel triangle reads far
+   larger than its box while the Stripe and Figma marks read smaller, so a
+   single height would leave the row visually uneven */
+.logo-stripe{--logo-h:21px;}
+.logo-linear{--logo-h:19px;}
+.logo-vercel{--logo-h:16px;}
+.logo-figma{--logo-h:21px;}
+.logo-framer{--logo-h:19px;}
+.logo-airbnb{--logo-h:20px;}
+.logo-apple{--logo-h:21px;}
+.logo-notion{--logo-h:19px;}
+
+/* 15px matches .service-positioning / .pricing-desc — the page's standing
+   size for a supporting line under a name */
+.standard-descriptor{font-size:15px;line-height:1.55;margin-top:12px;transition:color var(--dur-sm) var(--ease);}
+/* restrained, in the .service-row:hover idiom — the mark and its line
+   brighten; nothing lifts, scales or glows */
+.standard-item:hover .standard-logo{color:var(--dark-text);}
+.standard-item:hover .standard-descriptor{color:var(--dark-text);}
+
+@media (max-width:900px){.standards-grid{grid-template-columns:repeat(2,1fr);}}
+/* single column reads as a continuous list, so the rules butt together and
+   each item needs its own closing space */
+@media (max-width:560px){
+  .standards-grid{grid-template-columns:1fr;gap:0;}
+  .standard-item{padding:var(--space-3) 4px var(--space-3);}
+}
+
+/* ============================================================
    SERVICES
    ============================================================ */
 .services-section{padding:var(--space-7) 0;background:var(--bg-alt);}
