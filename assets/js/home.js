@@ -357,6 +357,23 @@ document.querySelectorAll('.faq-q').forEach(btn=>{
     }
   }
 
+  /* ---- Google Ads conversion ---- */
+  /* Fires only on a confirmed send, once per submission. Each submit stamps
+     an id, so repeat calls within one submission's success path are ignored
+     while a genuinely separate second enquiry still reports. The id is
+     recorded after the call, so a blocked/absent gtag leaves a later genuine
+     success free to report instead of silently burning the conversion. */
+  let submissionId = 0;
+  let reportedId   = 0;
+  function reportConversion(id){
+    if(id === reportedId) return;
+    if(typeof window.gtag !== 'function') return;
+    window.gtag('event', 'conversion', {
+      send_to: 'AW-18392097021/8DEICMCUsOIcEP3BhMJE'
+    });
+    reportedId = id;
+  }
+
   /* ---- success modal ---- */
   function openModal(){
     lastFocused = document.activeElement;
@@ -384,6 +401,8 @@ document.querySelectorAll('.faq-q').forEach(btn=>{
   form.addEventListener('submit', async function(e){
     e.preventDefault();
     if(sending) return;
+
+    const thisSubmission = ++submissionId;
 
     clearError();
     setSending(true);
@@ -415,6 +434,7 @@ document.querySelectorAll('.faq-q').forEach(btn=>{
       /* confirmed sent — only now is it safe to clear what they typed */
       form.reset();
       setSending(false);
+      reportConversion(thisSubmission);
       openModal();
     } catch {
       showError(FALLBACK_ERROR);
