@@ -319,6 +319,7 @@
   object-fit:cover;border:1px solid var(--dark-border);
 }
 .testimonial-attr strong{color:var(--dark-text);font-weight:600;}
+@media (max-width:640px){.testimonial-attr{text-align:left;}}
 
 /* ============================================================
    LOCUS FIELD (signature)
