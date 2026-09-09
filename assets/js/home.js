@@ -4,11 +4,21 @@
    ============================================================ */
 
 /* ============================================================
-   CONFIG — single place to update monthly availability
+   CONFIG — single place to update monthly availability.
+
+   Both pills (hero and the dark one in the contact panel) are written
+   from here, so the wording only ever lives in one place. The month is
+   derived from the current date rather than typed in, so it rolls over
+   on its own and cannot go stale the way a hardcoded one did; reword
+   the pill by editing `phrase` alone.
    ============================================================ */
-const AVAILABILITY = { spots: 2, month: "August" };
+const AVAILABILITY = {
+  phrase: month => `A few project spots left in ${month}`,
+  currentMonth: () => new Intl.DateTimeFormat('en-GB', { month:'long' }).format(new Date()),
+};
+const availabilityText = AVAILABILITY.phrase(AVAILABILITY.currentMonth());
 document.querySelectorAll('#availabilityText, #availabilityTextDark').forEach(el=>{
-  el.textContent = `${AVAILABILITY.spots} project spot${AVAILABILITY.spots===1?'':'s'} left in ${AVAILABILITY.month}`;
+  el.textContent = availabilityText;
 });
 
 /* ============================================================
