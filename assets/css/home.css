@@ -435,12 +435,19 @@
   object-fit:cover;border:1px solid var(--dark-border);
 }
 .testimonial-attr strong{color:var(--dark-text);font-weight:600;}
-/* mobile — the attribution stacks: avatar, then name, then role on its
-   own line beneath it, the whole group centred. .testimonial-sep is the
-   comma that joins the two on one line at desktop, so it comes out when
-   they stop sharing a line. Desktop is untouched. */
+/* mobile — avatar and text stay one horizontal group, centred as a unit.
+   The row direction, align-items:center and justify-content:center all
+   come from the base rule, so nothing about the arrangement is restated
+   here: the avatar keeps sitting beside the text and centred against it,
+   and the group as a whole stays centred in the section.
+
+   What does change is the text block. The role drops onto its own line
+   under the name, .testimonial-sep removes the comma that joins them on
+   one line at desktop, and text-align:left overrides the section's
+   centring so the two lines range against each other rather than each
+   centring on its own width. Desktop is untouched. */
 @media (max-width:640px){
-  .testimonial-attr{flex-direction:column;text-align:center;gap:14px;line-height:1.55;}
+  .testimonial-attr{gap:14px;line-height:1.55;text-align:left;}
   .testimonial-sep{display:none;}
   .testimonial-role{display:block;}
 }
