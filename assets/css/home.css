@@ -122,6 +122,17 @@
 @media (max-width:860px){
   .trust-section .section-head br{display:none;}
 }
+/* mobile — these two sections both sit on --bg-alt, so the standard
+   120px + 120px section boundary between them reads as one uninterrupted
+   void rather than a break; on a phone that is roughly a third of the
+   viewport. Elsewhere on the page the backgrounds alternate and the same
+   figures land correctly, so this is scoped to the one seam that needs it
+   and stays on the spacing scale: 56px below "and many more", 80px of
+   breathing room above the Featured Work eyebrow, 136px in total. */
+@media (max-width:700px){
+  .trust-section{padding-bottom:var(--space-5);}
+  .gallery-section{padding-top:var(--space-6);}
+}
 @media (max-width:700px){
   .trust-logos{
     --logo-scale:.92;
