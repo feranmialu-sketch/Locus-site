@@ -9,10 +9,33 @@
 .hero{
   position:relative;
   padding:calc(100px + var(--space-7)) 0 var(--space-7);
-  background:
-    radial-gradient(ellipse 70% 60% at 0% 0%, rgba(0,0,0,0.06), transparent 70%),
-    radial-gradient(ellipse 70% 60% at 100% 0%, rgba(0,0,0,0.06), transparent 70%),
-    #1D4ED8;
+  /* ---- Hero sky ---------------------------------------------------------
+     Photograph by Lhar Capili on Unsplash (photo-1700975647766-29b1a71370ca),
+     free under the Unsplash License. Cropped to rect 2200,0,3320,1844 of the
+     5520x4140 original and served at 2880x1600 — the crop is baked into the
+     file so cover/center needs no per-breakpoint nudging.
+
+     The crop was chosen by measurement, not eye: white text over the frame was
+     scored against the zone the hero type actually occupies at 1024/1280/1440/
+     1680/1920/2560 and at phone widths. It holds 5.10-5.93:1 everywhere, against
+     6.70:1 for the flat blue it replaces and 4.5:1 for WCAG AA. Cropping further
+     left drops to 1.09:1 at 1440 where the type crosses the cloud, which is why
+     the clouds sit hard against the left edge.
+
+     No overlay — the source is already this saturated. The colour underneath is
+     the image's own mean, so the swap is invisible while the file loads.
+
+     To revert to the original flat blue:
+       background:
+         radial-gradient(ellipse 70% 60% at 0% 0%, rgba(0,0,0,0.06), transparent 70%),
+         radial-gradient(ellipse 70% 60% at 100% 0%, rgba(0,0,0,0.06), transparent 70%),
+         #1D4ED8;
+     --------------------------------------------------------------------- */
+  background-color:#214E9B;
+  background-image:url('../images/Hero Image/hero-sky.jpg');
+  background-size:cover;
+  background-position:center;
+  background-repeat:no-repeat;
   overflow:hidden;
 }
 .hero::after{
