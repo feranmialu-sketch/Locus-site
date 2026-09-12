@@ -32,12 +32,26 @@ const track = document.getElementById('galleryTrack');
 
 (function marquee(){
   if(window.reduceMotion) return;
+  /* Speed is px per SECOND, not per frame. The previous `pos -= 1.5` advanced a
+     fixed step on every rAF tick, so the marquee ran at whatever rate the
+     display refreshed — twice as fast on a 120Hz phone or ProMotion Mac as on a
+     60Hz panel. Scaling by elapsed time gives one speed on every device.
+     135 = 1.5x the old pace (1.5px/frame was 90px/s on a 60Hz screen). */
+  const SPEED = 135;
   let pos = 0;
-  let speed = 1.5;
-  function step(){
-    pos -= speed;
+  let last = null;
+  function step(now){
+    /* no delta on the first frame; cap the rest so coming back to a
+       backgrounded tab resumes instead of skipping ahead */
+    const dt = last === null ? 0 : Math.min((now - last) / 1000, 0.05);
+    last = now;
+    pos -= SPEED * dt;
     const half = track.scrollWidth / 2;
-    if(Math.abs(pos) >= half) pos = 0;
+    /* wrap by adding a half-track rather than snapping to 0: the cloned second
+       copy sits exactly one half-track along, and keeping the sub-pixel
+       overshoot avoids the micro-jump that a hard reset would leave now that
+       each step is fractional */
+    if(Math.abs(pos) >= half) pos += half;
     track.style.transform = `translateX(${pos}px)`;
     requestAnimationFrame(step);
   }

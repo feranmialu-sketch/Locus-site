@@ -177,7 +177,6 @@
 .gallery-track{display:flex;gap:28px;width:max-content;padding:4px 0;}
 .gallery-card{
   height:clamp(340px,34vw,540px);flex-shrink:0;border-radius:26px;overflow:hidden;
-  box-shadow:0 24px 48px -30px rgba(11,12,13,0.22);
 }
 .gallery-card img{display:block;height:100%;width:auto;max-width:none;object-fit:cover;}
 @media (max-width:640px){.gallery-card{height:260px;}}
