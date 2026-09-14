@@ -370,11 +370,58 @@
 .service-row:hover .service-deliverables span{color:var(--ink);}
 @media (max-width:860px){.service-row{grid-template-columns:1fr;gap:16px;}}
 
+/* Custom engagement — the one blue surface in the services section.
+
+   Pattern: "Topography" from Hero Patterns (https://heropatterns.com) by
+   Steve Schoger, licensed CC BY 4.0. The artwork lives at
+   assets/images/patterns/topography.svg — geometry unmodified, recoloured
+   white so it can sit on the blue; see that file's header for attribution.
+   Chosen over wiggle / current / glamorous / lines-in-motion / connections /
+   rails, which are all small-tile motifs that read as texture or as circuit
+   diagram at this size. Contour lines are large, organic and layered, and a
+   contour map is on the nose for a studio called Locus.
+
+   It is a seamless 600px tile drawn at 680px, so the card shows a wide
+   horizontal slice of one continuous contour field with no visible seam and
+   the forms running off all four edges.
+
+   The mask is what makes it a composition rather than wallpaper: the copy
+   sits in the cleared corner and the field gathers toward the CTA side. The
+   100deg angle keeps that fade off-axis so the result is asymmetric. */
 .custom-engagement{
-  margin-top:32px;padding:36px;border-radius:var(--radius-lg);border:1px solid var(--border-strong);
-  display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap;background:#fff;
+  position:relative;isolation:isolate;overflow:hidden;
+  margin-top:32px;padding:36px;border-radius:var(--radius-lg);border:1px solid rgba(255,255,255,0.14);
+  display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap;
+  background:var(--accent);color:#fff;
 }
-.custom-engagement p{max-width:420px;}
+.custom-engagement::before{
+  content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background-image:url('../images/patterns/topography.svg');
+  background-repeat:repeat;
+  background-position:62% 34%;
+  background-size:680px 680px;
+  opacity:.32;
+  -webkit-mask-image:linear-gradient(100deg, transparent 0%, transparent 26%, rgba(0,0,0,0.55) 52%, #000 78%);
+  mask-image:linear-gradient(100deg, transparent 0%, transparent 26%, rgba(0,0,0,0.55) 52%, #000 78%);
+}
+.custom-engagement .service-name{color:#fff;}
+.custom-engagement p{max-width:420px;color:rgba(255,255,255,0.78);}
+.custom-engagement .btn-secondary{background:#fff;border-color:#fff;color:var(--accent);}
+.custom-engagement .btn-secondary:hover{background:#fff;border-color:#fff;color:var(--accent-dark);transform:translateY(-1px);box-shadow:0 10px 24px -8px rgba(8,26,64,0.38);}
+@media (max-width:760px){
+  .custom-engagement{padding:28px 24px;}
+  /* the copy stacks and fills the card, so the horizontal fade has nowhere
+     to clear. The mask turns vertical instead — contours hold the top and
+     bottom edges and drop out of the band the text runs through — and the
+     tile drops to 460px so those edges still show whole forms. */
+  .custom-engagement::before{
+    background-size:460px 460px;
+    background-position:68% 22%;
+    opacity:.28;
+    -webkit-mask-image:linear-gradient(180deg, #000 0%, rgba(0,0,0,0.3) 24%, transparent 40%, transparent 64%, rgba(0,0,0,0.34) 84%, #000 100%);
+    mask-image:linear-gradient(180deg, #000 0%, rgba(0,0,0,0.3) 24%, transparent 40%, transparent 64%, rgba(0,0,0,0.34) 84%, #000 100%);
+  }
+}
 
 /* ============================================================
    PROCESS (scroll-linked)
