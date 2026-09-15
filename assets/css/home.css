@@ -405,7 +405,10 @@
   mask-image:linear-gradient(100deg, transparent 0%, transparent 26%, rgba(0,0,0,0.55) 52%, #000 78%);
 }
 .custom-engagement .service-name{color:#fff;}
-.custom-engagement p{max-width:420px;color:rgba(255,255,255,0.78);}
+/* 500 rather than the inherited 400: at 78% white on the blue the body copy
+   was reading thin, and the extra weight restores legibility at every width
+   without tipping into bold. Size, line-height, colour and width are unchanged. */
+.custom-engagement p{max-width:420px;color:rgba(255,255,255,0.78);font-weight:500;}
 .custom-engagement .btn-secondary{background:#fff;border-color:#fff;color:var(--accent);}
 .custom-engagement .btn-secondary:hover{background:#fff;border-color:#fff;color:var(--accent-dark);transform:translateY(-1px);box-shadow:0 10px 24px -8px rgba(8,26,64,0.38);}
 @media (max-width:760px){
