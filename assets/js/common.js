@@ -27,6 +27,28 @@
 
 window.reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+/* ============================================================
+   AVAILABILITY PILL — single place to update monthly availability.
+
+   Every pill on the site is written from here (the homepage hero, the
+   dark one in the contact panel, and the one on each case study), so
+   the wording only ever lives in one place. The month is derived from
+   the current date rather than typed in, so it rolls over on its own
+   and cannot go stale the way a hardcoded one did; reword the pill by
+   editing `phrase` alone.
+
+   Mark up a pill's text span with `data-availability-text` and put the
+   month-less wording inside it as the no-JS fallback.
+   ============================================================ */
+const AVAILABILITY = {
+  phrase: month => `A few project spots left in ${month}`,
+  currentMonth: () => new Intl.DateTimeFormat('en-GB', { month:'long' }).format(new Date()),
+};
+const availabilityText = AVAILABILITY.phrase(AVAILABILITY.currentMonth());
+document.querySelectorAll('[data-availability-text]').forEach(el=>{
+  el.textContent = availabilityText;
+});
+
 /* Reveal threshold differs slightly between the homepage (0.15)
    and the case study pages (0.12); set via a data attribute on
    <body> (see case-study pages) so this file stays shared. */
