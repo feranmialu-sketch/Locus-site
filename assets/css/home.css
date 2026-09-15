@@ -100,9 +100,9 @@
      resolves to 80px — the same figure .work-list uses */
   margin-top:var(--space-6);
 }
-/* One treatment for six marks that arrive in three different colour
-   schemes (Andela is black artwork, Dévorer/Purse/Triton white, Taste
-   and Odoakpu are two-colour rasters): brightness(0) collapses each to
+/* One treatment for seven marks that arrive in three different colour
+   schemes (Andela is black artwork, Dévorer/Purse/Triton/Movva white,
+   Taste and Odoakpu two-colour rasters): brightness(0) collapses each to
    solid ink over its own alpha, and the opacity holds them at roughly
    --ink-soft so they sit under the Locus type rather than over it. */
 .trust-logo img{
@@ -114,10 +114,10 @@
 }
 .trust-logo:hover img{opacity:.92;}
 /* Per-logo widths, not a shared height: the source files differ in
-   aspect from 2.19 (Triton, a stacked lockup) to 5.66 (Taste, a wide
+   aspect from 2.19 (Triton, a stacked lockup) to 5.88 (Movva, a wide
    wordmark), so a single height would leave the wide marks huge and
    the stacked one tiny. Each width below is derived from that logo's
-   trimmed content box so the six carry the same optical weight, then
+   trimmed content box so the seven carry the same optical weight, then
    nudged for stroke weight — Dévorer is ultra-bold and reads heavier
    than its box, Andela's serif lighter. Height stays auto throughout,
    so no mark can be stretched. */
@@ -127,9 +127,10 @@
 .trust-logo-devorer{--logo-w:82;}
 .trust-logo-taste{--logo-w:115;}
 .trust-logo-odoakpu{--logo-w:110;}
+.trust-logo-movva{--logo-w:115;}
 .trust-more{font-size:15px;color:var(--ink-faint);}
 
-/* Below ~1180px the six no longer hold one comfortable row, so they
+/* Below ~1180px the seven no longer hold one comfortable row, so they
    move to a grid — 3 up, then 2 up — with "and many more" spanning
    the full width underneath, keeping the composition centred. */
 @media (max-width:1180px){
@@ -138,6 +139,12 @@
     row-gap:clamp(36px,5vw,52px);
   }
   .trust-more{grid-column:1 / -1;}
+  /* seven marks no longer divide evenly into the rows, so the last one
+     would sit alone in column one. Spanning it centres that odd mark over
+     the rows above, the same thing .trust-more already does. Written
+     against the count rather than Movva specifically, so it keeps holding
+     if a logo is added or dropped later. */
+  .trust-logo:nth-last-child(2):nth-child(3n+1){grid-column:1 / -1;}
 }
 /* the hard break in the heading balances its two lines while the type is
    large; below this it is small enough that a natural wrap over the full
@@ -163,6 +170,8 @@
     column-gap:clamp(24px,6vw,40px);
     row-gap:clamp(32px,8vw,44px);
   }
+  /* the two-up rows leave the same odd mark stranded — centre it too */
+  .trust-logo:nth-last-child(2):nth-child(2n+1){grid-column:1 / -1;}
 }
 
 /* ============================================================
